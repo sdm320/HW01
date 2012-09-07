@@ -49,11 +49,17 @@ private:
 */
 		
 void CatPictureApp::drawRect(int x1, int x2, int y1, int y2, uint8_t* pixArray){
-	int width = x2-x1;
-	int height = y2-y1;
-	for(int i=y1;i<height;i++)
-	{
-		for(int j=x1;j<width;j++)
+
+	int startx = (x1 < x2) ? x1 : x2;		//This will prevent any issues with x1 or y1 being larger than x2 or y2
+ 	int endx = (x1 < x2) ? x2 : x1;
+ 	int starty = (y1 < y2) ? y1 : y2;
+ 	int endy = (y1 < y2) ? y2 : y1;
+
+	int width = (endx-startx)+1;			//This was a slight calculation error which I acutally made in mine too simply saying that
+	int height = (endy-starty)+1;			//x2-x1 is the width would actually give you 1 less from the actually width
+	for(int i=y1;i<height-1;i++)			//Ex: x1 = 2 and x2 = 4, width encompasses 2,3, and 4 so the length is 3, not 4-2 = 2
+	{										//Like I said though, did the same thing at first on mine. 
+		for(int j=x1;j<width-1;j++)
 		{
 			pixArray[3*(j+i*Size)] = 255;
 			pixArray[3*(j+i*Size)+1] = 2;
@@ -156,8 +162,13 @@ void CatPictureApp::setup()
 	
 }
 
-void CatPictureApp::mouseDown( MouseEvent event )
-{
+void CatPictureApp::mouseDown( MouseEvent event )		//added Mouse Interaction
+{														//Your program actually took care of most of this already, can click to make circles
+	uint8_t* pixArray = (*mySurface_).getData();		//that will gradually fade away
+	int x1, y1;											//Thought it was kinda cool
+	x1 = event.getX();
+	y1 = event.getY();
+	drawCircle(x1,y1,50,pixArray);
 }
 
 /*
